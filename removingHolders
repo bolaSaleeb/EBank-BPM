@@ -1,0 +1,52 @@
+if(tw.local.holdersResults.length != 0){
+	tw.local.holdersResults.splice(tw.local.selectedIndexHolder,1);
+	tw.local.visDifferentAccounts = "None";
+	tw.local.visSearch = "Same as parent";
+	tw.local.visNationality = "Required";
+
+if (tw.local.customerSearchObj.nationality == "Egyptian") {
+    tw.local.visDocumentType = "Required";
+    tw.local.visPassportNumber = "None";
+    if (tw.local.customerSearchObj.documentType == "National ID") {
+        tw.local.visExpirationDateNID = "Required";
+        tw.local.visNatID = "Required";
+        tw.local.visName = "None";
+        tw.local.visPassportNumber2 = "None";
+    } else {
+        tw.local.visExpirationDateNID = "None";
+        tw.local.visNatID = "Required";
+        tw.local.visName = "Required";
+        tw.local.visPassportNumber2 = "Required";
+    }
+} else {
+    tw.local.visName = "Required";
+    tw.local.visPassportNumber = "Required";
+    tw.local.visPassportNumber2 = "None";
+    tw.local.visNatID = "None";
+    tw.local.visExpirationDateNID = "None";
+}
+
+	}
+
+
+
+if(tw.local.holdersResults.length == 0){
+	tw.local.visHolderTable = "None";
+	tw.local.visDifferentAccounts = "None";
+}
+
+
+if(tw.local.holdersResults.length<2 && tw.local.customerSearchObj.accountType=="Gift"){
+	tw.local.visDifferentAccounts = "None";
+}
+
+if(tw.local.customerSearchObj.accountType=="Joint"){
+	for(var i=0; i<tw.local.holdersResults.length; i++){
+			tw.local.holdersResults[i].customer = "Holder "+(i+1);
+	}
+}else if(tw.local.customerSearchObj.accountType=="Gift"){
+	if(tw.local.holdersResults.length==1){
+		tw.local.holdersResults[0].customer = "Main Holder";
+		tw.local.holdersResults[0].cifType = "Customer";
+	}
+}
