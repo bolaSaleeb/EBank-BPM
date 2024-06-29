@@ -1,0 +1,502 @@
+tw.local.errorList = [];
+var numOfHolders = parseInt(tw.local.numberOfHolders);
+if (tw.local.deduplicationResults[0].cifID == "" || tw.local.deduplicationResults[0].cifID == null) {
+    tw.local.tempHolderResult = {};
+    // set data
+    tw.local.tempHolderResult.cifID = "New";
+    if (tw.local.customerSearchObj.accountType == "Joint") {
+        tw.local.tempHolderResult.cifType = "Customer";
+    }
+    else {
+        tw.local.tempHolderResult.cifType = "New";
+    }
+    if (tw.local.customerSearchObj.documentType == "National ID") {
+        tw.local.tempHolderResult.natID = tw.local.customerSearchObj.nationalID;
+    }
+    else if (tw.local.customerSearchObj.documentType == "Passport") {
+        tw.local.tempHolderResult.natID = tw.local.customerSearchObj.passportNumber;
+    }
+
+    //push to list
+    if (tw.local.customerSearchObj.accountType == "Joint") {
+        if (tw.local.holdersResults.length < numOfHolders) {
+            var duplicateFound = false;
+            for (var i = 0; i < tw.local.holdersResults.length; i++) {
+                if (tw.local.holdersResults[i].natID === tw.local.tempHolderResult.natID) {
+                    duplicateFound = true;
+                    break; // Exit loop if duplicate is found
+                }
+            }
+            if (!duplicateFound) {
+                tw.local.holdersResults[tw.local.holdersResults.length] = tw.local.tempHolderResult;
+            }
+            else {
+                tw.system.coachValidation.addValidationError("tw.local.customerSearchObj.nationalID", "Please Enter New National ID");
+            }
+            var index = tw.local.holdersResults.length - 1;
+            if (index == 0) {
+                tw.local.applicationData = {};
+                tw.local.applicationData.aoFormDetails = [];
+            }
+            tw.local.applicationData.aoFormDetails[index] = {};
+            tw.local.applicationData.aoFormDetails[index].basicData = {};
+            tw.local.applicationData.aoFormDetails[index].basicData.dateOfBirth = tw.local.customerSearchObj.dateOfBirth;
+            tw.local.applicationData.aoFormDetails[index].basicData.idExpiryDate = tw.local.customerSearchObj.expirationDate;
+            tw.local.applicationData.aoFormDetails[index].nationality = tw.local.customerSearchObj.nationality;
+            tw.local.applicationData.aoFormDetails[index].basicData.firstNationality = tw.local.customerSearchObj.nationality;
+            tw.local.applicationData.aoFormDetails[index].searchNationality = tw.local.customerSearchObj.nationality;
+            tw.local.applicationData.aoFormDetails[index].basicData.documentType = tw.local.customerSearchObj.documentType;
+            tw.local.applicationData.aoFormDetails[index].basicData.accountType = tw.local.customerSearchObj.accountType;
+            
+            if(tw.local.existingCustomer==true){
+           		tw.local.applicationData.aoFormDetails[index].isNewToBank = false;
+	      }else{
+	      	tw.local.applicationData.aoFormDetails[index].isNewToBank = true;
+	      }
+            
+            if (tw.local.customerSearchObj.nationality == "Egyptian") {
+                tw.local.applicationData.aoFormDetails[index].basicData.dateOfBirth = tw.local.customerSearchObj.dateOfBirth;
+                tw.local.applicationData.aoFormDetails[index].basicData.idExpiryDate = tw.local.customerSearchObj.expirationDate;
+                tw.local.applicationData.aoFormDetails[index].basicData.natID = tw.local.customerSearchObj.nationalID;
+                tw.local.applicationData.aoFormDetails[index].basicData.cityOfBirth = tw.local.customerSearchObj.cityOfBirth;
+                tw.local.applicationData.aoFormDetails[index].basicData.gender = tw.local.gender;
+                if (tw.local.customerSearchObj.documentType == "National ID") {
+
+                }
+                else {
+                    tw.local.applicationData.aoFormDetails[index].basicData.passportNumber = tw.local.customerSearchObj.passportNumber;
+                    tw.local.applicationData.aoFormDetails[index].basicData.nameAsInPassport = tw.local.customerSearchObj.nameInPassport;
+                }
+            }
+            else {
+                tw.local.applicationData.aoFormDetails[index].basicData.passportNumber = tw.local.customerSearchObj.passportNumber;
+                tw.local.applicationData.aoFormDetails[index].basicData.nameAsInPassport = tw.local.customerSearchObj.nameInPassport;
+            }
+        }
+
+        if (tw.local.holdersResults.length == numOfHolders) {
+            tw.local.visDifferentAccounts = "Same as parent";
+
+        }
+        else if (tw.local.holdersResults.length > numOfHolders) {
+            tw.local.visDifferentAccounts = "None";
+        }
+    }
+    else if (tw.local.customerSearchObj.accountType == "Gift") {
+
+        if (tw.local.holdersResults.length < 2) {
+            // Initialize flag to false
+            var duplicateFound = false;
+            for (var i = 0; i < tw.local.holdersResults.length; i++) {
+                if (tw.local.holdersResults[i].natID === tw.local.tempHolderResult.natID) {
+                    duplicateFound = true;
+                    break; // Exit loop if duplicate is found
+                }
+            }
+            if (!duplicateFound) {
+            
+                tw.local.holdersResults[tw.local.holdersResults.length] = tw.local.tempHolderResult;
+                var index = tw.local.holdersResults.length - 1;
+                
+                if (index == 0) {
+                    tw.local.applicationData = {};
+                    tw.local.applicationData.aoFormDetails = [];
+                }
+
+                tw.local.applicationData.aoFormDetails[index] = {};
+                tw.local.applicationData.aoFormDetails[index].basicData = {};
+                tw.local.applicationData.aoFormDetails[index].basicData.dateOfBirth = tw.local.customerSearchObj.dateOfBirth;
+                tw.local.applicationData.aoFormDetails[index].basicData.idExpiryDate = tw.local.customerSearchObj.expirationDate;
+                tw.local.applicationData.aoFormDetails[index].nationality = tw.local.customerSearchObj.nationality;
+                tw.local.applicationData.aoFormDetails[index].basicData.firstNationality = {};
+                tw.local.applicationData.aoFormDetails[index].basicData.firstNationality = tw.local.customerSearchObj.nationality;
+                //              tw.local.applicationData.aoFormDetails[index].basicData.firstNationality.name = tw.local.customerSearchObj.nationality;
+                //              tw.local.applicationData.aoFormDetails[index].basicData.firstNationality.value = tw.local.customerSearchObj.nationality;
+                tw.local.applicationData.aoFormDetails[index].searchNationality = tw.local.customerSearchObj.nationality;
+                tw.local.applicationData.aoFormDetails[index].basicData.documentType = tw.local.customerSearchObj.documentType;
+                tw.local.applicationData.aoFormDetails[index].basicData.accountType = tw.local.customerSearchObj.accountType;
+                
+                if(tw.local.existingCustomer==true){
+           			tw.local.applicationData.aoFormDetails[index].isNewToBank = false;
+		      }else{
+		      	tw.local.applicationData.aoFormDetails[index].isNewToBank = true;
+		      }
+                
+                if (tw.local.customerSearchObj.nationality == "Egyptian") {
+                    tw.local.applicationData.aoFormDetails[index].basicData.dateOfBirth = tw.local.customerSearchObj.dateOfBirth;
+                    tw.local.applicationData.aoFormDetails[index].basicData.idExpiryDate = tw.local.customerSearchObj.expirationDate;
+                    tw.local.applicationData.aoFormDetails[index].basicData.natID = tw.local.customerSearchObj.nationalID;
+                    tw.local.applicationData.aoFormDetails[index].basicData.cityOfBirth = tw.local.customerSearchObj.cityOfBirth;
+                    tw.local.applicationData.aoFormDetails[index].basicData.gender = tw.local.gender;
+                    if (tw.local.customerSearchObj.documentType == "National ID") {
+
+                    } else {
+                        tw.local.applicationData.aoFormDetails[index].basicData.passportNumber = tw.local.customerSearchObj.passportNumber;
+                        tw.local.applicationData.aoFormDetails[index].basicData.nameAsInPassport = tw.local.customerSearchObj.nameInPassport;
+                    }
+                }
+                else {
+                    tw.local.applicationData.aoFormDetails[index].basicData.passportNumber = tw.local.customerSearchObj.passportNumber;
+                    tw.local.applicationData.aoFormDetails[index].basicData.nameAsInPassport = tw.local.customerSearchObj.nameInPassport;
+                }
+                tw.local.visSearch = "Same as parent";
+            }
+            else {
+                tw.system.coachValidation.addValidationError("tw.local.customerSearchObj.nationalID", "Please Enter New National ID");
+            }
+        }
+        else {
+            tw.system.coachValidation.addValidationError("tw.local.customerSearchObj.nationalID", "Please Check Number of Holders");
+            tw.local.errorList.push("Please Check Number of Holders");
+        }
+        if (tw.local.holdersResults.length == 2) {
+            tw.local.visDifferentAccounts = "Same as parent";
+        }
+        else if (tw.local.holdersResults.length > 2) {
+            tw.local.visDifferentAccounts = "None";
+        }
+    }
+
+
+    //set visibility
+    tw.local.visHolderTable = "Same as parent";
+    tw.local.visAdd = "None";
+    tw.local.visDeduplicationTable = "None";
+    tw.local.visSearch = "Same as parent";
+    tw.local.visNoCustomers = "None";
+}
+
+else {
+    tw.local.visDifferentAccounts = "None";
+    // set data
+    tw.local.tempHolderResult = {};
+    tw.local.tempHolderResult.cifID = tw.local.deduplicationResults[0].cifID;
+    tw.local.tempHolderResult.cifType = tw.local.deduplicationResults[0].subType;
+    tw.local.tempHolderResult.customerName = tw.local.deduplicationResults[0].firstName + " " + tw.local.deduplicationResults[0].lastName;
+    tw.local.tempHolderResult.natID = tw.local.customerSearchObj.nationalID;
+
+    //push to list
+    if (tw.local.customerSearchObj.accountType == "Joint") {
+        if (tw.local.holdersResults.length < numOfHolders) {
+            // Initialize flag to false
+            var duplicateFound = false;
+            // Check for duplicate cfid using a for loop
+            for (var i = 0; i < tw.local.holdersResults.length; i++) {
+                if (tw.local.holdersResults[i].cifID === tw.local.tempHolderResult.cifID) {
+                    duplicateFound = true;
+                    break; // Exit loop if duplicate is found
+                }
+            }
+            // Add tempHolderResult if no duplicate cfid found
+            if (!duplicateFound) {
+                tw.local.holdersResults[tw.local.holdersResults.length] = tw.local.tempHolderResult;
+                //tw.local.holdersResults[tw.local.holdersResults.length-1].customer = "Holder "+tw.local.holdersResults.length;
+                var index = tw.local.holdersResults.length - 1;
+                if (index == 0) {
+                    tw.local.applicationData = {};
+                    tw.local.applicationData.aoFormDetails = [];
+                }
+
+                tw.local.applicationData.aoFormDetails[index] = {};
+                tw.local.applicationData.aoFormDetails[index].basicData = {};
+                tw.local.applicationData.aoFormDetails[index].basicData.dateOfBirth = tw.local.customerSearchObj.dateOfBirth;
+                tw.local.applicationData.aoFormDetails[index].basicData.idExpiryDate = tw.local.customerSearchObj.expirationDate;
+                tw.local.applicationData.aoFormDetails[index].nationality = tw.local.customerSearchObj.nationality;
+                tw.local.applicationData.aoFormDetails[index].basicData.firstNationality = {};
+                tw.local.applicationData.aoFormDetails[index].basicData.firstNationality = tw.local.customerSearchObj.nationality;
+                tw.local.applicationData.aoFormDetails[index].searchNationality = tw.local.customerSearchObj.nationality;
+                tw.local.applicationData.aoFormDetails[index].basicData.documentType = tw.local.customerSearchObj.documentType;
+                tw.local.applicationData.aoFormDetails[index].basicData.accountType = tw.local.customerSearchObj.accountType;
+                
+                if(tw.local.existingCustomer==true){
+           			tw.local.applicationData.aoFormDetails[index].isNewToBank = false;
+		      }else{
+		      	tw.local.applicationData.aoFormDetails[index].isNewToBank = true;
+		      }
+                
+                if (tw.local.customerSearchObj.nationality == "Egyptian") {
+                    tw.local.applicationData.aoFormDetails[index].basicData.dateOfBirth = tw.local.customerSearchObj.dateOfBirth;
+                    tw.local.applicationData.aoFormDetails[index].basicData.idExpiryDate = tw.local.customerSearchObj.expirationDate;
+                    tw.local.applicationData.aoFormDetails[index].basicData.natID = tw.local.customerSearchObj.nationalID;
+                    tw.local.applicationData.aoFormDetails[index].basicData.cityOfBirth = tw.local.customerSearchObj.cityOfBirth;
+                    tw.local.applicationData.aoFormDetails[index].basicData.gender = tw.local.gender;
+                    if (tw.local.customerSearchObj.documentType == "National ID") {
+
+                    } else {
+                        tw.local.applicationData.aoFormDetails[index].basicData.passportNumber = tw.local.customerSearchObj.passportNumber;
+                        tw.local.applicationData.aoFormDetails[index].basicData.nameAsInPassport = tw.local.customerSearchObj.nameInPassport;
+                    }
+                } else {
+                    tw.local.applicationData.aoFormDetails[index].basicData.passportNumber = tw.local.customerSearchObj.passportNumber;
+                    tw.local.applicationData.aoFormDetails[index].basicData.nameAsInPassport = tw.local.customerSearchObj.nameInPassport;
+
+                }
+
+            }
+            else {
+                tw.system.coachValidation.addValidationError("tw.local.customerSearchObj.nationalID", "Please Enter New National ID");
+            }
+        }
+        if (tw.local.holdersResults.length == numOfHolders) {
+            tw.local.visDifferentAccounts = "Same as parent";
+
+        }
+        else if (tw.local.holdersResults.length > numOfHolders) {
+            tw.local.visDifferentAccounts = "None";
+        }
+    }
+    else if (tw.local.customerSearchObj.accountType == "Gift") {
+        if (tw.local.holdersResults.length < 2) {
+            // Initialize flag to false
+            var duplicateFound = false;
+            // Check for duplicate cfid using a for loop
+            for (var i = 0; i < tw.local.holdersResults.length; i++) {
+                if (tw.local.holdersResults[i].cifID === tw.local.tempHolderResult.cifID) {
+                    duplicateFound = true;
+                    break; // Exit loop if duplicate is found
+                }
+            }
+            // Add tempHolderResult if no duplicate cfid found
+            if (!duplicateFound) {
+                tw.local.holdersResults[tw.local.holdersResults.length] = tw.local.tempHolderResult;
+
+                var index = tw.local.holdersResults.length - 1;
+
+                if (index == 0) {
+                    tw.local.applicationData = {};
+                    tw.local.applicationData.aoFormDetails = [];
+                }
+
+                tw.local.applicationData.aoFormDetails[index] = {};
+                tw.local.applicationData.aoFormDetails[index].basicData = {};
+
+                tw.local.applicationData.aoFormDetails[index].basicData.dateOfBirth = tw.local.customerSearchObj.dateOfBirth;
+                tw.local.applicationData.aoFormDetails[index].basicData.idExpiryDate = tw.local.customerSearchObj.expirationDate;
+                tw.local.applicationData.aoFormDetails[index].nationality = tw.local.customerSearchObj.nationality;
+                tw.local.applicationData.aoFormDetails[index].basicData.firstNationality = {};
+                tw.local.applicationData.aoFormDetails[index].basicData.firstNationality = tw.local.customerSearchObj.nationality;
+                tw.local.applicationData.aoFormDetails[index].searchNationality = tw.local.customerSearchObj.nationality;
+                tw.local.applicationData.aoFormDetails[index].basicData.documentType = tw.local.customerSearchObj.documentType;
+                tw.local.applicationData.aoFormDetails[index].basicData.accountType = tw.local.customerSearchObj.accountType;
+
+		    if(tw.local.existingCustomer==true){
+           		tw.local.applicationData.aoFormDetails[index].isNewToBank = false;
+	      }else{
+	      	tw.local.applicationData.aoFormDetails[index].isNewToBank = true;
+	      }
+			
+
+                if (tw.local.customerSearchObj.nationality == "Egyptian") {
+
+                    tw.local.applicationData.aoFormDetails[index].basicData.natID = tw.local.customerSearchObj.nationalID;
+                    tw.local.applicationData.aoFormDetails[index].basicData.dateOfBirth = tw.local.customerSearchObj.dateOfBirth;
+                    tw.local.applicationData.aoFormDetails[index].basicData.cityOfBirth = tw.local.customerSearchObj.cityOfBirth;
+                    tw.local.applicationData.aoFormDetails[index].basicData.gender = tw.local.gender;
+
+                    if (tw.local.customerSearchObj.documentType == "National ID") {
+
+
+
+                    } else {
+                        tw.local.applicationData.aoFormDetails[index].basicData.passportNumber = tw.local.customerSearchObj.passportNumber;
+                        tw.local.applicationData.aoFormDetails[index].basicData.nameAsInPassport = tw.local.customerSearchObj.nameInPassport;
+                    }
+                } else {
+
+
+                    tw.local.applicationData.aoFormDetails[index].basicData.passportNumber = tw.local.customerSearchObj.passportNumber;
+                    tw.local.applicationData.aoFormDetails[index].basicData.nameAsInPassport = tw.local.customerSearchObj.nameInPassport;
+
+                }
+            }
+            else {
+                tw.system.coachValidation.addValidationError("tw.local.customerSearchObj.nationalID", "Please Enter New National ID");
+            }
+        }
+        else {
+            tw.system.coachValidation.addValidationError("tw.local.holdersResults.length", "Please Check Number of Holders");
+            tw.local.errorList.push("Please Check Number of Holders");
+
+        }
+        if (tw.local.holdersResults.length == 2) {
+            tw.local.visDifferentAccounts = "Same as parent";
+
+        }
+        else if (tw.local.holdersResults.length > 2) {
+            tw.local.visDifferentAccounts = "None";
+        }
+
+
+    }
+
+    //set visibility
+    tw.local.visHolderTable = "Same as parent";
+    tw.local.visAdd = "None";
+    tw.local.visDeduplicationTable = "None";
+    tw.local.visSearch = "Same as parent";
+    tw.local.visNoCustomers = "None";
+
+}
+
+
+if (tw.local.customerSearchObj.accountType == "Joint") {
+    if (tw.local.holdersResults.length == tw.local.numberOfHolders) {
+        tw.local.visNationality = "Read only";
+        //tw.local.visPassportNumber = "None";
+        if (tw.local.customerSearchObj.nationality == "Egyptian") {
+            tw.local.visDocumentType = "Read only";
+            if (tw.local.customerSearchObj.documentType == "National ID") {
+                tw.local.visExpirationDateNID = "Read only";
+                tw.local.visNatID = "Read only";
+                tw.local.visName = "None";
+                tw.local.visPassportNumber2 = "None";
+            } else if (tw.local.customerSearchObj.documentType == "Passport") {
+                tw.local.visExpirationDateNID = "None";
+                tw.local.visNatID = "Read only";
+                tw.local.visName = "Read only";
+                tw.local.visPassportNumber2 = "Read only";
+            }
+        } else if (tw.local.customerSearchObj.nationality == "Foreigner") {
+            tw.local.visName = "Read only";
+            tw.local.visPassportNumber = "Read only";
+            tw.local.visPassportNumber2 = "None";
+            tw.local.visNatID = "None";
+            tw.local.visExpirationDateNID = "None";
+            tw.local.visDateOfBirth = "Read only";
+        }
+        tw.local.visSearch = "Read only";
+        tw.local.visDifferentAccounts = "Same as parent";
+    }
+    else {
+        tw.local.visNationality = "Required";
+
+        if (tw.local.customerSearchObj.nationality == "Egyptian") {
+            tw.local.visDocumentType = "Required";
+            tw.local.visPassportNumber = "None";
+            if (tw.local.customerSearchObj.documentType == "National ID") {
+                tw.local.visExpirationDateNID = "Required";
+                tw.local.visNatID = "Required";
+                tw.local.visName = "None";
+                tw.local.visPassportNumber2 = "None";
+            } else {
+                tw.local.visExpirationDateNID = "None";
+                tw.local.visNatID = "Required";
+                tw.local.visName = "Required";
+                tw.local.visPassportNumber2 = "Required";
+            }
+        } else {
+            tw.local.visName = "Required";
+            tw.local.visPassportNumber = "Required";
+            tw.local.visPassportNumber2 = "None";
+            tw.local.visNatID = "None";
+            tw.local.visExpirationDateNID = "None";
+        }
+
+    }
+} else if (tw.local.customerSearchObj.accountType == "Gift") {
+    if (tw.local.holdersResults.length == 2) {
+        tw.local.visNationality = "Read only";
+        //tw.local.visPassportNumber = "None";
+        if (tw.local.customerSearchObj.nationality == "Egyptian") {
+            tw.local.visDocumentType = "Read only";
+            if (tw.local.customerSearchObj.documentType == "National ID") {
+                tw.local.visExpirationDateNID = "Read only";
+                tw.local.visNatID = "Read only";
+                tw.local.visName = "None";
+                tw.local.visPassportNumber2 = "None";
+            } else if (tw.local.customerSearchObj.documentType == "Passport") {
+                tw.local.visExpirationDateNID = "None";
+                tw.local.visNatID = "Read only";
+                tw.local.visName = "Read only";
+                tw.local.visPassportNumber2 = "Read only";
+            }
+        } else if (tw.local.customerSearchObj.nationality == "Foreigner") {
+            tw.local.visName = "Read only";
+            tw.local.visPassportNumber = "Read only";
+            tw.local.visPassportNumber2 = "None";
+            tw.local.visNatID = "None";
+            tw.local.visExpirationDateNID = "None";
+            tw.local.visDateOfBirth = "Read only";
+        }
+        tw.local.visSearch = "Read only";
+        tw.local.visDifferentAccounts = "Same as parent";
+    }
+    else {
+        tw.local.visNationality = "Required";
+
+        if (tw.local.customerSearchObj.nationality == "Egyptian") {
+            tw.local.visDocumentType = "Required";
+            tw.local.visPassportNumber = "None";
+            if (tw.local.customerSearchObj.documentType == "National ID") {
+                tw.local.visExpirationDateNID = "Required";
+                tw.local.visNatID = "Required";
+                tw.local.visName = "None";
+                tw.local.visPassportNumber2 = "None";
+            } else {
+                tw.local.visExpirationDateNID = "None";
+                tw.local.visNATID = "Required";
+                tw.local.visName = "Required";
+                tw.local.visPassportNumber2 = "Required";
+            }
+        } else {
+            tw.local.visName = "Required";
+            tw.local.visPassportNumber = "Required";
+            tw.local.visPassportNumber2 = "None";
+            tw.local.visNatID = "None";
+            tw.local.visExpirationDateNID = "None";
+        }
+
+    }
+}
+
+
+
+
+
+
+if (tw.local.customerSearchObj.accountType == "Joint") {
+    for (var i = 0; i < tw.local.holdersResults.length; i++) {
+        tw.local.holdersResults[i].customer = "Holder " + (i + 1);
+    }
+}
+
+tw.local.visNewToBank = "None";
+
+if (tw.local.customerSearchObj.accountType == "Gift") {
+    for (var i = 0; i < tw.local.holdersResults.length; i++) {
+        if (tw.local.holdersResults[i].cifType == "Customer") {
+            tw.local.holdersResults[i].customer = "Main Holder";
+        } else if (tw.local.holdersResults[i].cifType == "Contact") {
+            tw.local.holdersResults[i].customer = "Donor";
+        }
+    }
+
+    if (tw.local.holdersResults.length == 2) {
+        tw.local.holdersResults[0].customer = "Main Holder";
+        tw.local.holdersResults[0].cifType = "Customer";
+        tw.local.holdersResults[1].customer = "Donor";
+        tw.local.holdersResults[1].cifType = "Contact";
+        tw.local.visDifferentAccounts = "Same as parent";
+    } else if (tw.local.holdersResults.length == 1) {
+        tw.local.holdersResults[0].customer = "Main Holder";
+        tw.local.holdersResults[0].cifType = "Customer";
+
+    }
+}
+
+
+if (tw.system.coachValidation.validationErrors.length > 0) {
+    tw.local.validationSuccess = false;
+    for (var i = 0; i < tw.system.coachValidation.validationErrors.length; i++) {
+        tw.local.errorList.push(tw.system.coachValidation.validationErrors[i].errorMessage);
+    }
+} else {
+    tw.local.customerSearchObj.nationalID = "";
+    tw.local.customerSearchObj.passportNumber = "";
+    tw.local.customerSearchObj.nameInPassport = "";
+    tw.local.customerSearchObj.dateOfBirth = null;
+    tw.local.customerSearchObj.expirationDate = null;
+
+}
+
+tw.local.existingCustomer=false;
